@@ -9,26 +9,26 @@ on:
 
 jobs:
   test-backend:
-    name: Backend Tests
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Setup Python
         uses: actions/setup-python@v4
-        with:
+        with: 
           python-version: '3.11'
 
       - name: Install dependencies
         working-directory: backend
         run: |
-          python -m pip install --upgrade pip
+          pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest pytest-asyncio
+          pip install pytest pytest-asyncio alembic
+
+      - name: Run migrations
+        working-directory: backend
+        run: alembic upgrade head
 
       - name: Run tests
         working-directory: backend
-        run: |
-          pytest -q
+        run: pytest -q
