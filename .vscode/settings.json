@@ -1,0 +1,8 @@
+// bo_report_app/.vscode/settings.json
+{
+    // Chemin vers l’exécutable Python de ton venv dans backend
+    "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/Scripts/python.exe",
+    // Active automatiquement l'env dans les nouveaux terminaux intégrés
+    "python.terminal.activateEnvironment": true
+  }
+  
