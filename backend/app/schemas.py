@@ -87,3 +87,15 @@ class PrintLogBase(BaseModel):
 class PrintLog(PrintLogBase):
     id: int
     class Config: from_attributes = True
+
+class UserCreate(BaseModel):
+    username: str
+    password: str
+
+class UserRead(BaseModel):
+    id: int
+    username: str
+    is_active: bool
+
+    class Config:
+        from_attributes = True

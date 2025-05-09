@@ -1,6 +1,7 @@
 from datetime import datetime
 from sqlalchemy import Boolean, Column, DateTime, Integer, String, Date, Text
 from sqlalchemy.ext.declarative import declarative_base
+from app.models import Base
 
 Base = declarative_base()
 
@@ -55,3 +56,10 @@ class PicklistLog(Base):
     go_item       = Column(String(20), nullable=False)
     payload_json  = Column(Text, nullable=False)   # la pick‑list complète
     printed_at    = Column(DateTime, default=datetime.utcnow)
+
+class User(Base):
+    __tablename__ = "user"
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    is_active = Column(Boolean, default=True)
