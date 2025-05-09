@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<style>
+  @page { size:A4 landscape; margin:5mm 3mm }
+  body   { font-family:Arial, sans-serif; font-size:9pt }
+  h1     { margin:0; text-align:center; font-size:13pt }
+
+  .header td   { border:1px solid #000; padding:3pt 4pt; vertical-align:middle }
+  .header      { width:100%; border-collapse:collapse; margin-bottom:6pt }
+  .header img  { max-width:35mm; height:auto }     /* logo réduit */
+
+  .lines       { width:100%; border-collapse:collapse; table-layout:fixed }
+  .lines th,
+  .lines td    { border:1px solid #000; padding:2pt 3pt; vertical-align:middle }
+  .lines th    { background:#f2f2f2; text-align:center }
+  .small       { font-size:8pt }
+  .stock       { background:#d9d9d9; text-align:center }
+  .center      { text-align:center }
+</style>
+
+<body>
+<table class="header">
+  <tr>
+    <td rowspan="2" style="width:35mm"><img src="{{ logo64 }}" alt="Eaton"></td>
+    <td colspan="10"><h1>SHORTAGE JOB REPORT</h1></td>
+  </tr>
+  <tr>
+    <td colspan="3">GO&nbsp;: <strong>{{ go_item }}</strong></td>
+    <td colspan="3">ORACLE&nbsp;: {{ oracle }}</td>
+    <td colspan="4">CUSTOMER JOB&nbsp;:</td>
+  </tr>
+</table>
+
+<p>Généré le : {{ generated_at.strftime('%d/%m/%Y') }}</p>
+
+<table class="lines">
+  <thead>
+    <!-- première ligne d’en-tête -->
+    <tr>
+      <th rowspan="2" style="width:30mm">Oracle&nbsp;Status</th>
+      <th rowspan="2" style="width:12mm">Item&nbsp;#</th>
+      <th rowspan="2" style="width:35mm">Discrete&nbsp;Job</th>
+      <th rowspan="2">Part&nbsp;#</th>
+      <th rowspan="2" style="width:22mm">Open&nbsp;Qty</th>
+      <th colspan="2" style="width:27mm">AMO</th>
+      <th colspan="2" style="width:27mm">KB</th>
+      <th colspan="2" style="width:27mm">Surplus</th>
+      <th rowspan="2" style="width:22mm">Date<br>of<br>Picking</th>
+      <th rowspan="2" style="width:14mm">Initials</th>
+    </tr>
+    <!-- deuxième ligne d’en-tête -->
+    <tr>
+      <th class="small">Picked</th><th class="small stock">Stock</th>
+      <th class="small">Picked</th><th class="small stock">Stock</th>
+      <th class="small">Picked</th><th class="small stock">Stock</th>
+    </tr>
+  </thead>
+
+  <tbody>
+  {% for l in lines %}
+    <tr>
+      <td class="small center">{{ l.flow_status }}</td>
+      <td class="center">{{ l.item }}</td>
+      <td class="center">{{ l.discrete }}</td>
+      <td>{{ l.part_number }}</td>
+      <td class="center">{{ l.qty_to_pick }}</td>
+
+      <td></td><td class="stock">{{ l.amo_qty or 0 }}</td>
+      <td></td><td class="stock">{{ l.kb_qty or 0 }}</td>
+      <td></td><td class="stock">{{ l.surplus_qty or 0 }}</td>
+
+      <td></td><td></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</body>
+</html>
