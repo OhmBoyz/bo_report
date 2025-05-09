@@ -7,10 +7,11 @@ from app.services.data_import import read_backlog_df, read_redcon_df
 from app.services.sync_main import sync_main
 from app.services.utils import _find_column
 from .. import crud, schemas
+from app.routers.auth import get_current_user
 
 router = APIRouter(prefix="/imports", tags=["imports"])
 
-@router.post("/redcon")
+@router.post("/redcon", dependencies=[Depends(get_current_user)])
 async def import_redcon(
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
@@ -56,7 +57,7 @@ async def import_redcon(
 
     return {"imported_redcon": count}
 
-@router.post("/backlog")
+@router.post("/backlog", dependencies=[Depends(get_current_user)])
 async def import_backlog(
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
@@ -87,7 +88,7 @@ async def import_backlog(
         count += 1
     return {"imported_backlog": count}
 
-@router.post("/sync")
+@router.post("/sync", dependencies=[Depends(get_current_user)])
 async def full_sync(
     backlog_path: str,
     redcon_path: str,

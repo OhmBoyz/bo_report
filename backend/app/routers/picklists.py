@@ -1,6 +1,7 @@
 # app/routers/picklists.py
 from __future__ import annotations
-
+from fastapi import Depends
+from app.routers.auth import get_current_user
 import io
 import json
 from datetime import datetime
@@ -49,7 +50,7 @@ class BatchRequest(schemas.BaseModel):
     go_number: str | None = None
 
 
-@router.post("/generate")
+@router.post("/generate", dependencies=[Depends(get_current_user)])
 def generate(req: BatchRequest, db: Session = Depends(get_db)):
     """
     1) Génère une ou plusieurs pick-lists.

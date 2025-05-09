@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from .. import crud, schemas
 from ..database import SessionLocal
+from app.routers.auth import get_current_user
 
 router = APIRouter(
     prefix="/items",   # toutes les routes démarrent par /items
@@ -23,7 +24,7 @@ def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 def create_item(item: schemas.MainItemCreate, db: Session = Depends(get_db)):
     return crud.create_main_item(db, item)     
 
-@router.patch("/{go_item}/{part_number}", response_model=schemas.MainItem)
+@router.patch("/{go_item}/{part_number}", response_model=schemas.MainItem, dependencies=[Depends(get_current_user)])
 def update_item(
     go_item: str,
     part_number: str,
