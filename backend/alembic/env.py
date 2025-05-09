@@ -1,6 +1,7 @@
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 from alembic import context
+import os
 
 # 1) Importez ici votre Base SQLAlchemy
 from app.models import Base  
@@ -10,6 +11,12 @@ target_metadata = Base.metadata
 
 # -- début du boilerplate Alembic --
 config = context.config
+
+config.set_main_option(
+    "sqlalchemy.url",
+    os.getenv("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
+)
+
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 # -- fin du boilerplate Alembic --
