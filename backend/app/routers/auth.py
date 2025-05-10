@@ -1,16 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from datetime import timedelta
-from jose import jwt, JWTError
-from fastapi.security import OAuth2PasswordBearer
-
+from datetime import datetime, timedelta
+from jose import JWTError, jwt
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 
 from app import crud, schemas
 from app.services import auth_service
 from app.database import get_db
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post("/register", response_model=schemas.UserRead)
@@ -19,12 +18,12 @@ def register(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
     user = crud.create_user(db, user_in.username, hashed)
     return user
 
-@router.post("/token")
-def login(form_data: schemas.UserCreate, db: Session = Depends(get_db)):
+@router.post("/token", response_model=schemas.Token, summary="Obtenir un token d'accès (OAuth2 Password Flow)")
+def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = crud.get_user_by_username(db, form_data.username)
     if not user or not auth_service.verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    access_token = auth_service.create_access_token({"sub": user.username})
+    access_token = auth_service.create_access_token({"sub": user.username},expires_delta=timedelta(minutes=auth_service.ACCESS_TOKEN_EXPIRE_MINUTES))
     return {"access_token": access_token, "token_type": "bearer"}
 
 from fastapi import Depends, HTTPException, status

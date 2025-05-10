@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from datetime import date, datetime
-from typing import Optional
-from typing import List
+from typing import Optional, List
 
 class MainItemBase(BaseModel):
     go_item: str
@@ -99,3 +98,10 @@ class UserRead(BaseModel):
 
     class Config:
         from_attributes = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
